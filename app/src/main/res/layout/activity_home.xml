@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_shade_1"
+    tools:context=".HomeActivity">
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/qr_code"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:id="@+id/idIVLogo"/>
+
+    <TextView
+        android:id="@+id/idTVHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/idIVLogo"
+        android:layout_gravity="center"
+        android:layout_marginTop="22dp"
+        android:padding="4dp"
+        android:layout_marginLeft="40dp"
+        android:text="Welcome to QR Code Generator and \n QR Code Scanner."
+        android:textAlignment="center"
+        android:textColor="@color/yellow"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_below="@+id/idTVHeading"
+        android:id="@+id/qrGenerator"
+        android:text="Generator QR Generator"
+        android:background="@drawable/button_back"
+        android:layout_marginTop="28dp"
+        android:textAllCaps="false"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_below="@+id/qrGenerator"
+        android:id="@+id/qrScanner"
+        android:text="Generator QR Scanner"
+        android:background="@drawable/button_back"
+        android:layout_marginTop="28dp"
+        android:textAllCaps="false"/>
+
+</RelativeLayout>
