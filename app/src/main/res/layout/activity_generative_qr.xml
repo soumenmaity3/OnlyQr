@@ -35,7 +35,6 @@
         android:hint="Add text to embed in QR Code"
         android:padding="5dp"
         android:textColorHint="@color/white"
-        app:hintTextColor="@color/white">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/idEditData"
