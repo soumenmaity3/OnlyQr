@@ -1,7 +1,9 @@
 package com.example.onlyqr;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ public class ScannerQR extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 200;
     private BarcodeView scanner;
     private TextView scannerTV;
+    private  String qrData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,14 @@ public class ScannerQR extends AppCompatActivity {
         } else {
             requestPermissions();
         }
+        scannerTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ScannerQR.this, ScannerExecute.class);
+                intent.putExtra("DATA",qrData);
+                startActivity(intent);
+            }
+        });
     }
 
     private boolean checkPermissions() {
@@ -49,7 +60,7 @@ public class ScannerQR extends AppCompatActivity {
             @Override
             public void barcodeResult(BarcodeResult result) {
                 if (result != null) {
-                    String qrData = result.getText();
+                    qrData = result.getText();
                     scannerTV.setText(qrData);
                     Toast.makeText(ScannerQR.this, "Scanned: " + qrData, Toast.LENGTH_SHORT).show();
                 }
