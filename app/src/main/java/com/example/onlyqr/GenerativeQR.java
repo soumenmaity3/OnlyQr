@@ -1,8 +1,14 @@
 package com.example.onlyqr;
 
+import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,13 +21,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class GenerativeQR extends AppCompatActivity {
 private TextView qrCodeTv;
 private ImageView qrCodeIv;
 private TextInputEditText dataEdt;
 private Button generateQRBtn;
+private ImageButton btnDownload;
 
 
+    @SuppressLint({"WrongViewCast"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +48,10 @@ private Button generateQRBtn;
         qrCodeIv=findViewById(R.id.idIVQRCode);
         dataEdt=findViewById(R.id.idEditData);
         generateQRBtn=findViewById(R.id.idBtnGenerateQr);
+        btnDownload=findViewById(R.id.idBtnDownload);
+
+
+
         generateQRBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,5 +93,62 @@ private Button generateQRBtn;
             }
         });
 
+        btnDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Use the QR code bitmap displayed in the ImageView
+                qrCodeIv.setDrawingCacheEnabled(true);
+                Bitmap bitmap = qrCodeIv.getDrawingCache();
+                downloadQR(bitmap);
+                qrCodeIv.setDrawingCacheEnabled(false);
+            }
+        });
+
     }
+
+    public void downloadQR(Bitmap bitmap) {
+        if (bitmap == null) {
+            Toast.makeText(this, "Generate QR Code before downloading!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            String fileName = "QRCode_" + System.currentTimeMillis() + ".png";
+            String savedImagePath;
+
+            // Check if external storage is writable
+            if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+                File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/QRCodeGenerator");
+                if (!storageDir.exists()) {
+                    boolean mkdirs = storageDir.mkdirs();
+                    if (!mkdirs) {
+                        Toast.makeText(this, "Failed to create directory", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                File imageFile = new File(storageDir, fileName);
+                savedImagePath = imageFile.getAbsolutePath();
+
+                // Save the bitmap to the file
+                try (FileOutputStream fileOutputStream = new FileOutputStream(imageFile)) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                    fileOutputStream.flush();
+                }
+
+                // Add the image to the gallery
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(imageFile);
+                mediaScanIntent.setData(contentUri);
+                this.sendBroadcast(mediaScanIntent);
+
+                Toast.makeText(this, "QR Code saved to Gallery: " + savedImagePath, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "External storage not writable", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving QR Code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }
