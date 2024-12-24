@@ -1,5 +1,8 @@
 package com.example.onlyqr;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -57,6 +60,17 @@ public class ScannerQR extends AppCompatActivity {
             Intent intent = new Intent(ScannerQR.this, ScannerExecute.class);
             intent.putExtra("DATA", qrData);
             startActivity(intent);
+        });
+        scannerTV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (qrData != null && !qrData.isEmpty()) {
+                    copyToClipboard(qrData);
+                } else {
+                    Toast.makeText(ScannerQR.this, "No text to copy!", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
         });
 
         btnChooseGallery.setOnClickListener(v -> openGallery());
@@ -136,6 +150,7 @@ public class ScannerQR extends AppCompatActivity {
                 if (qrCodeResult != null) {
                     Toast.makeText(this, "QR Code: " + qrCodeResult, Toast.LENGTH_LONG).show();
                     scannerTV.setText(qrCodeResult);
+                    qrData = qrCodeResult;  // Ensure qrData is updated
                 } else {
                     Toast.makeText(this, "No QR code found in the image", Toast.LENGTH_SHORT).show();
                 }
@@ -158,8 +173,32 @@ public class ScannerQR extends AppCompatActivity {
             Result result = new MultiFormatReader().decode(binaryBitmap);
             return result.getText();
         } catch (NotFoundException e) {
+            e.printStackTrace();
             return null;
         }
     }
+
+
+    public void copyToClipboard(String text) {
+        if (text == null || text.isEmpty()) {
+            Toast.makeText(this, "No text to copy!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (clipboard != null) {
+                    ClipData clip = ClipData.newPlainText("QR Code", text);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(ScannerQR.this, "Copied to Clipboard", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ScannerQR.this, "Clipboard not available", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
 }
