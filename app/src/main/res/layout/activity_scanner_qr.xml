@@ -27,5 +27,12 @@
         android:background="@color/black_shade_1"
         android:textSize="18sp"
         android:id="@+id/idTVScannerData"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/idTVScannerData"
+        android:layout_marginBottom="50dp"
+        android:text="Choose From Your Gallery"
+        android:id="@+id/idBtnChooseImage"/>
 
 </RelativeLayout>
